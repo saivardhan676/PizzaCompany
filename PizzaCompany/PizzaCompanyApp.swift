@@ -11,7 +11,8 @@ import SwiftUI
 struct PizzaCompanyApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootTabView()
+                .environmentObject(UserPreferences())
         }
     }
 }
