@@ -12,7 +12,7 @@ struct ContentView: View {
     @State var isMenuDisplayed = true
     
     var body: some View {
-        VStack() {
+        VStack(spacing: 0) {
 //            ContentHeaderView()
 //                .layoutPriority(2)
             Button(action: {

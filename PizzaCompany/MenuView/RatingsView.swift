@@ -10,7 +10,7 @@ import SwiftUI
 struct RatingsView: View {
     var count: Int = 4
     var rating: [String] {
-        let symboleName = "\(count).circle"
+        let symboleName = "\(count).circle.fill"
         return Array(repeating: symboleName, count: count)
     }
     

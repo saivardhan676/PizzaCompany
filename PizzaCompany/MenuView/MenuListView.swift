@@ -26,7 +26,6 @@ struct MenuListView: View {
                     .foregroundColor(.primary)
                 }
                 .listStyle(.plain)
-                .navigationTitle("Pizza Order")
                 .navigationDestination(item: $selectedItem) { item in
                     MenuDetailView(orderModel: self.orderModel, menuItem: item)
                 }

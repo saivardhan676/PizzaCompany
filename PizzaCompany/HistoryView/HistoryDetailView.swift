@@ -12,12 +12,12 @@ struct HistoryDetailView: View {
     var historyItem: HistoryItem
     @Binding var imageID: Int
     @State var isPresented: Bool = false
-    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         imageID = historyItem.id
         return VStack {
             PageTitleView(title: historyItem.name)
+            backButtonView()
             MapView(latitude: historyItem.latitude, longitude: historyItem.longitude, regionRadius: 1000000)
                 .frame(height: 100)
             PresentMapButton(isPresented: $isPresented, historyItem: historyItem)
@@ -26,26 +26,9 @@ struct HistoryDetailView: View {
                     .frame(height:300)
                     .padding()
             }
-            .ignoresSafeArea(edges: .top)
             Spacer()
         }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    dismiss()
-                }) {
-                    HStack(spacing: 3) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 12, weight: .bold)) // Adjust size here
-                        Text("Back")
-                            .font(.system(size: 14)) // Smaller text
-                    }
-                    .foregroundColor(.blue)
-                }
-                .frame(height: 20)
-            }
-        }
+        .navigationBarHidden(true)
     }
 }
 

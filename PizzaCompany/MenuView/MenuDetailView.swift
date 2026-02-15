@@ -1,98 +1,124 @@
 //
 //  MenuDetailView.swift
 //  Pizza
-//
-//  Created by Steven Lipton on 9/2/19.
+//  adaptive version for landscape.
+//  creates two functions of views to be able to switch them between Hstack and Vstack.
+//  Created by Steven Lipton on 12/26/20.
 //  Copyright © 2019 Steven Lipton. All rights reserved.
 //
 
 import SwiftUI
 ///A `View`for entering in an order. Takes basic information about the order from `menuItem`
+
+var size:Size = .medium
+
 struct MenuDetailView: View {
-    @EnvironmentObject var settings: UserPreferences
-    @ObservedObject var orderModel: OrderModel
+    @EnvironmentObject var settings:UserPreferences
+    @ObservedObject var orderModel:OrderModel
     @State var didOrder: Bool = false
     @State var quantity: Int = 1
-    @Environment(\.dismiss) var dismiss
-    var menuItem: MenuItem
+    
+    var menuItem:MenuItem
     var formattedPrice:String{
-        String(format:"%3.2f",menuItem.price * Double(quantity) * settings.size.rawValue)
+        String(format:"%3.2f",menuItem.price * Double(quantity) * size.rawValue)
     }
     func addItem(){
         didOrder = true
     }
     
-    var body: some View {
-        VStack {
-            PageTitleView(title: menuItem.name)
-            SelectedImageView(image: "\(menuItem.id)_250w")
-                .padding(5)
-                .layoutPriority(3)
-            
-            Text(menuItem.description)
-                .lineLimit(5)
-                .padding()
-                .layoutPriority(3)
-                
-            Spacer()
-            
-            .background(Color("G1"))
-            .cornerRadius(20)
-            PickerView(size: $settings.size)
-                .padding()
-            StepperView(quantity: $quantity)
-                .padding()
-            
-            HStack {
-                Text("Order:  \(formattedPrice)")
-                    .font(.headline)
-                Spacer()
-                Text("Order total: " + orderModel.formattedTotal)
-                    .font(.headline)
+    func isCompactPortrait(geo:GeometryProxy)->Bool{
+        return geo.size.height <= 414
+    }
+    
+    func titleView()->some View{
+        return
+        GeometryReader { geo in
+            HStack{
+                SelectedImageView(image: "\(self.menuItem.id)_250w")
+                    .padding(5)
+                Text(self.menuItem.description)
+                    .padding()
+                    .font(geo.size.height > 200 ? .body : .caption)
+                    .frame(width: geo.size.width * 2/5)
             }
-            .padding([.leading, .trailing])
-            
-            HStack {
-                Spacer()
-                Button(action: addItem) {
-                   Text("Add to order")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .padding(12)
-                        .background(Color("G4"))
-                        .foregroundColor(Color("IP"))
-                        .cornerRadius(5)
-                    
-                }
-                .sheet(isPresented: $didOrder, content: {
-                    ConfirmView(menuID: menuItem.id, isPresented: self.$didOrder, quantity: $quantity, size: $settings.size, orderModel: orderModel)
-                })
-                Spacer()
-            }
-            .padding(.top)
+        }
+    }
+    
+    func menuOptionsView()-> some View{
+        return  VStack{
+            PickerView(size:$settings.size)
+                .padding()
+            StepperView(quantity:$quantity)
+                .padding()
+            PageTitleView(title: "Order:  \(formattedPrice)")
             Spacer()
         }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    dismiss()
-                }) {
-                    HStack(spacing: 3) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 12, weight: .bold)) // Adjust size here
-                        Text("Back")
-                            .font(.system(size: 14)) // Smaller text
+    }
+    
+    var body: some View {
+        GeometryReader { geo in
+            VStack {
+                backButtonView()
+                HStack{
+                    PageTitleView(title: self.menuItem.name)
+                    Button(action: self.addItem) {
+                        Text("Add to order")
+                            .padding([.leading, .trailing])
+                            .font(isCompactPortrait(geo: geo) ? staticFont : .title)
+                            .fontWeight(.bold)
+                            .background(Color("G3"))
+                            .foregroundColor(Color("IP"))
+                            .cornerRadius(5)
                     }
-                    .foregroundColor(.blue)
+                    .sheet(isPresented: self.$didOrder){
+                        ConfirmView(menuID: self.menuItem.id, isPresented: self.$didOrder, quantity: self.$quantity, size: self.$settings.size, orderModel: self.orderModel)
+                    }
                 }
-                .frame(height: 20)
+                if isCompactPortrait(geo: geo) {
+                    HStack{
+                        self.titleView()
+                        self.menuOptionsView()
+                    }
+                } else {
+                    VStack{
+                        self.titleView()
+                        self.menuOptionsView()
+                    }
+                }
             }
+            .padding(.top, 5)
+            .navigationBarHidden(true)
         }
     }
 }
 
 #Preview {
-    MenuDetailView(orderModel: OrderModel(), menuItem: testMenuItem)
+    MenuDetailView(orderModel:OrderModel(),menuItem: testMenuItem)
         .environmentObject(UserPreferences())
 }
+
+struct QuantityStepperView: View {
+    @Binding var quantity:Int
+    var body: some View {
+        Stepper(value: $quantity, in: 1...10){
+            Text("Quantity \(quantity)")
+        }
+        .padding()
+    }
+}
+
+struct SizePickerView: View {
+    
+    @Binding var size:Size
+    let sizes:[Size] = [.small,.medium,.large]
+    var body: some View {
+        Picker(selection:$size, label:Text("Pizza Size")){
+            ForEach(sizes, id:\.self){ size in
+                Text(size.formatted()).tag(size)
+            }
+        }
+        .pickerStyle(SegmentedPickerStyle())
+        .font(.headline)
+    }
+}
+
