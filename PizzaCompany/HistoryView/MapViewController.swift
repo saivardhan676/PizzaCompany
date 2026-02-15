@@ -1,9 +1,5 @@
 //
 //  ViewController.swift
-//  HistoryMap
-//
-//  Created by Steven Lipton on 9/19/19.
-//  Copyright © 2019 Steven Lipton. All rights reserved.
 //
 
 import UIKit

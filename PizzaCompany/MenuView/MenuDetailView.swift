@@ -1,11 +1,6 @@
 //
 //  MenuDetailView.swift
-//  Pizza
-//  adaptive version for landscape.
-//  creates two functions of views to be able to switch them between Hstack and Vstack.
-//  Created by Steven Lipton on 12/26/20.
-//  Copyright © 2019 Steven Lipton. All rights reserved.
-//
+//  
 
 import SwiftUI
 ///A `View`for entering in an order. Takes basic information about the order from `menuItem`

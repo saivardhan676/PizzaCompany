@@ -1,9 +1,5 @@
 //
 //  ConfirmView.swift
-//  HuliPizza
-//
-//  Created by Steven Lipton on 9/13/19.
-//  Copyright © 2019 Steven Lipton. All rights reserved.
 //
 
 import SwiftUI

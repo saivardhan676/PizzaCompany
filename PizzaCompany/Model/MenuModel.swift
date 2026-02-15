@@ -2,9 +2,6 @@
 //  MenuModel.swift
 //  Pizza
 //
-//  Created by Steven Lipton on 9/1/19.
-//  Copyright © 2019 Steven Lipton. All rights reserved.
-//
 
 import Foundation
 ///A basic description of a menu item
